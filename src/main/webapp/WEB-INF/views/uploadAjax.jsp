@@ -87,11 +87,26 @@
 			  },1000);
 		  });
 		}
-		
+		//x표시 이벤트 처리 
+		$(".uploadResult").on("click","span",function(e){
+			var targetFile = $(this).data("file");
+			var type = $(this).data("type");
+			console.log(targetFile);
+			
+			$.ajax({
+				url: '/deleteFile',
+				data: {fileName : targetFile , type:type},
+				dataType : 'text',
+				type: 'POST',
+				success:function(result){
+					alert(result);
+				}
+			});//ajax;
+		});
 	
 		$(document).ready(function() {
 
-							//업로드한 일반파일의 아이콘을 출력시키는 함수 
+							//업로드한 일반파일 아이콘 및 이미지는 섬네일 을 출력시키는 함수 
 
 							var uploadResult = $(".uploadResult ul");
 							
@@ -106,22 +121,23 @@
 													if (!obj.image) {
 														var fileCallPath = encodeURIComponent(obj.uploadPath+"/"+obj.uuid+"_"+obj.fileName);
 																
-														str += "<li><a href='/download?fileName="+fileCallPath+"'>"
-															+"<img src='/resources/img/attach.png'>"+obj.fileName
-																+ "</a></li>";
+														str += "<li><div><a href='/download?fileName="+fileCallPath+"'>"
+															+"<img src='/resources/img/attach.png'>"+obj.fileName +"</a>"+
+															"<span data-file=\'"+ fileCallPath +"\' data-type='file'> x </span>"+
+															"<div></li>";
 													} else {
 														//str += "<li>" + obj.fileName + "</li>";
-														var fileCallPath = encodeURIComponent(obj.uploadPath
-																+ "/s_"
-																+ obj.uuid
-																+ "_"
+														//파일 위치+섬네일 표시 + uuid + filename
+														var fileCallPath = encodeURIComponent(obj.uploadPath+ "/s_"+ obj.uuid+ "_"
 																+ obj.fileName);
-														
+														//오리지널 이미지 위치와 이름
 														var originPath = obj.uploadPath+"\\"+obj.uuid+"_"+obj.fileName;
 														
 														originPath = originPath.replace(new RegExp(/\\/g),"/");
 														
-														str += "<li><a href=\"javascript:showImage(\'"+ originPath +"\')\"><img src='/display?fileName="+fileCallPath+"'></a><li>";
+														str += "<li><a href=\"javascript:showImage(\'"+ originPath +"\')\"><img src='/display?fileName="+fileCallPath+"'></a>"+
+																"<span data-file =\'" + fileCallPath+"\' data-type='image'> x </span>"+
+																"<li>";
 													}
 												});
 
